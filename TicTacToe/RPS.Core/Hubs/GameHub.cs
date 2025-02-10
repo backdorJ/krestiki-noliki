@@ -43,6 +43,7 @@ public class GameHub : Hub
                 .SendAsync("JoinedGameInfo", new
                 {
                     IsPlayer = true,
+                    game.Status
                 });
 
             return;
@@ -61,6 +62,7 @@ public class GameHub : Hub
                     new
                     {
                         IsPlayer = true,
+                        game.Status
                     });
         }
         else
@@ -70,6 +72,7 @@ public class GameHub : Hub
                 .SendAsync("JoinedGameInfo", new
                 {
                     IsPlayer = false,
+                    game?.Status
                 });
         }
     }
