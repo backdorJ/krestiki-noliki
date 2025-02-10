@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./JoinGameModal.css";
+import "./CreateGameModal.css";
 import {createGame} from "../../http/gameHttp";
 
-const JoinGameModal = ({ isOpen, onClose, onSubmit }) => {
+const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
     const [roomName, setRoomName] = useState("");
     const [maxRating, setMaxRating] = useState("");
 
@@ -52,4 +52,4 @@ const JoinGameModal = ({ isOpen, onClose, onSubmit }) => {
     );
 };
 
-export default JoinGameModal;
+export default CreateGameModal;

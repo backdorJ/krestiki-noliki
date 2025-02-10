@@ -9,3 +9,7 @@ export const createGame = (body) => {
 export const getGames = (body) => {
     return $authClient.get(baseUrl + "get-games");
 }
+
+export const joinGame = (gameId) => {
+    return $authClient.get(baseUrl + "join-game");
+}

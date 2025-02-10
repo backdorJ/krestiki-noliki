@@ -13,7 +13,7 @@ const CustomRouter = ({isAuthenticated}) => {
                         isAuthenticated
                             ? <>
                                 <Route path="/" element={<GamesPage />} />
-                                <Route path="/game" element={<GamePage />} />
+                                <Route path="/game/:id" element={<GamePage />} />
                             </>
                             : <>
                                 <Route path="/register" element={<AuthPage isRegistration={true} />} />
