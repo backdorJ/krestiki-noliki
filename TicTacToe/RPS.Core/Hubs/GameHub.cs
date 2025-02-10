@@ -93,7 +93,7 @@ public class GameHub : Hub
 
         // Отправляем сообщение всем, кроме игроков
         await Clients.GroupExcept(gameId, playerConnectionIds)
-            .SendAsync("MoveMade", new { Message = $"The Player made a move - {move}" });
+            .SendAsync("MoveMade", new { Message = $"The Player {currentUser.Name} made a move - {move}" });
 
         // Логика определения победителя
         if (game.Moves.Count == 2)
