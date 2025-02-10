@@ -92,7 +92,7 @@ public class GameHub : Hub
             .ToList();
 
         // Отправляем сообщение всем, кроме игроков
-        await Clients.GroupExcept(gameId.ToString(), playerConnectionIds)
+        await Clients.GroupExcept(gameId, playerConnectionIds)
             .SendAsync("MoveMade", new { Message = $"The Player made a move - {move}" });
 
         // Логика определения победителя
@@ -175,19 +175,19 @@ public class GameHub : Hub
 
     private async Task SendResultToChat(string result, Game game)
     {
-        string message;
+        string winnerMessage;
         if (result == "draw")
         {
-            message = "Ничья!";
+            winnerMessage = "Ничья!";
         }
         else
         {
             var winner = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == result);
-            message = $"{winner?.Name} победил!";
+            winnerMessage = $"{winner?.Name} победил!";
         }
 
         await Clients
             .Group(game.Id.ToString())
-            .SendAsync("GameResult", message);
+            .SendAsync("GameResult", new {Message = winnerMessage});
     }
 }
