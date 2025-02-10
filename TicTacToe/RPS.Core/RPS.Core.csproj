@@ -2,14 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>TicTacToe.Core</RootNamespace>
+        <RootNamespace>RPS.Core</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TicTacToe.Domain\TicTacToe.Domain.csproj" />
-      <ProjectReference Include="..\TicTacToe.MediatR\TicTacToe.MediatR.csproj" />
+      <ProjectReference Include="..\RPS.Domain\RPS.Domain.csproj" />
+      <ProjectReference Include="..\RPS.MediatR\RPS.MediatR.csproj" />
     </ItemGroup>
 
     <ItemGroup>

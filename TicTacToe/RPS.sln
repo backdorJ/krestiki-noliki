@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.UI", "TicTacToe.UI\TicTacToe.UI.csproj", "{9256A941-D213-43DF-BABC-D60C55FD1258}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPS.UI", "RPS.UI\RPS.UI.csproj", "{9256A941-D213-43DF-BABC-D60C55FD1258}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Domain", "TicTacToe.Domain\TicTacToe.Domain.csproj", "{8D6D0460-415F-4306-8EAD-03938CE3ADA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPS.Domain", "RPS.Domain\RPS.Domain.csproj", "{8D6D0460-415F-4306-8EAD-03938CE3ADA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.DAL", "TicTacToe.DAL\TicTacToe.DAL.csproj", "{A12F1817-431F-41F3-BD6A-3BDE05ACE8BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPS.DAL", "RPS.DAL\RPS.DAL.csproj", "{A12F1817-431F-41F3-BD6A-3BDE05ACE8BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Core", "TicTacToe.Core\TicTacToe.Core.csproj", "{D59B4A9D-E52E-4E04-B851-B96A2AFA5D58}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPS.Core", "RPS.Core\RPS.Core.csproj", "{D59B4A9D-E52E-4E04-B851-B96A2AFA5D58}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AF55B9B3-6B88-4D63-9D73-177E84740E39}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.MediatR", "TicTacToe.MediatR\TicTacToe.MediatR.csproj", "{63D20719-BC14-432A-A705-83C37E8EFCA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPS.MediatR", "RPS.MediatR\RPS.MediatR.csproj", "{63D20719-BC14-432A-A705-83C37E8EFCA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
