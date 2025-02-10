@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using RPS.Core.Enums;
 using RPS.Domain.Entities;
 using TicTacToe.Core.Interfaces;
 
@@ -18,109 +19,130 @@ public class GameHub : Hub
         _dbContext = dbContext;
     }
 
-    public async Task JoinGame(Guid gameId)
+    // Присоединение к комнате
+    public async Task JoinRoom(Guid gameId)
     {
         var game = await _dbContext.Games
-            .Include(x => x.Users)
-            .FirstOrDefaultAsync(x => x.Id == gameId && !x.IsFinished);
+            .Include(x => _dbContext.Users)
+            .FirstOrDefaultAsync(g => g.Id == gameId && !g.IsFinished);
 
         var currentUser = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Id == _userContext.UserId);
+            .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
         
         if (currentUser == null)
             throw new ArgumentNullException(nameof(currentUser));
 
-        // Присоединение к группе SignalR
         await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
 
-        if (game == null)
-        {
-            await Clients.Caller.SendAsync("Error", "Игра не найдена.");
-            return;
-        }
-
-        if (game.Users.Count < 2 && !game.Users.Any(u => u.Id == currentUser.Id))
+        // Проверка рейтинга
+        if (game?.Users.Count() < 2 && currentUser.Rating <= game.MaxRating)
         {
             game.Users.Add(currentUser);
+            game.Status = GameStatus.Playing;
             await _dbContext.SaveChangesAsync();
 
-            await Clients.Group(gameId.ToString())
-                .SendAsync("PlayerJoined", currentUser.Name);
+            await Clients.Group(gameId.ToString()).SendAsync("GameStarted", gameId);
         }
         else
         {
-            // Зритель
-            await Clients.Caller.SendAsync("JoinedAsSpectator", "Вы подключены как зритель.");
+            await Clients.Caller.SendAsync("JoinedAsSpectator");
         }
     }
 
+    // Совершение хода
     public async Task MakeMove(Guid gameId, string move)
     {
-        var currentUser = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Id == _userContext.UserId);
+        var game = await _dbContext.Games.Include(g => g.Moves).FirstOrDefaultAsync(g => g.Id == gameId);
+        var currentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
 
-        var game = await _dbContext.Games
-            .Include(x => x.Users)
-            .FirstOrDefaultAsync(x => x.Id == gameId && !x.IsFinished);
-
-        if (currentUser == null || game == null)
-        {
-            await Clients.Caller.SendAsync("Error", "Невозможно выполнить ход.");
+        if (currentUser == null || game == null || game.IsFinished)
             return;
-        }
 
-        if (!game.Users.Any(u => u.Id == currentUser.Id))
-        {
-            await Clients.Caller.SendAsync("Error", "Вы не являетесь игроком.");
-            return;
-        }
-
-        // Логика обработки хода
         game.Moves.Add(new Move { UserId = currentUser.Id, Choice = move });
         await _dbContext.SaveChangesAsync();
 
-        // Обновление состояния игры для всех (игроков и зрителей)
-        await Clients.Group(gameId.ToString())
-            .SendAsync("MoveMade", new { Player = currentUser.Name, Move = move });
+        await Clients.Group(gameId.ToString()).SendAsync("MoveMade", new { Player = currentUser.Name, Move = move });
 
-        if (game.Moves.Count >= 2)
+        if (game.Moves.Count == 2)
         {
-            var result = DetermineWinner(game.Moves);
+            var result = DetermineWinner(game);
+            await UpdateRatings(result, game);
+            await SendResultToChat(result, game);
+
             game.IsFinished = true;
             await _dbContext.SaveChangesAsync();
 
-            await Clients.Group(gameId.ToString())
-                .SendAsync("GameFinished", result);
+            // Старт нового раунда через 5 секунд
+            await Task.Delay(5000);
+            await StartNewRound(game);
         }
     }
 
-    private string DetermineWinner(List<Move> moves)
+    private async Task StartNewRound(Game previousGame)
     {
-        var move1 = moves[0];
-        var move2 = moves[1];
+        var newGame = new Game
+        {
+            Users = previousGame.Users,
+            Status = GameStatus.Playing,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _dbContext.Games.Add(newGame);
+        await _dbContext.SaveChangesAsync();
+
+        await Clients.Group(previousGame.Id.ToString())
+            .SendAsync("NewRoundStarted", newGame.Id);
+    }
+
+    private string DetermineWinner(Game game)
+    {
+        var move1 = game.Moves[0];
+        var move2 = game.Moves[1];
 
         if (move1.Choice == move2.Choice)
-            return "Ничья!";
+            return "draw";
 
         return (move1.Choice, move2.Choice) switch
         {
-            ("rock", "scissors") => $"Победил игрок {move1.UserId}",
-            ("scissors", "paper") => $"Победил игрок {move1.UserId}",
-            ("paper", "rock") => $"Победил игрок {move1.UserId}",
-            _ => $"Победил игрок {move2.UserId}"
+            ("rock", "scissors") => move1.UserId.ToString(),
+            ("scissors", "paper") => move1.UserId.ToString(),
+            ("paper", "rock") => move1.UserId.ToString(),
+            _ => move2.UserId.ToString()
         };
     }
 
-    public override async Task OnDisconnectedAsync(Exception exception)
+    private async Task UpdateRatings(string winnerId, Game game)
     {
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Id == _userContext.UserId);
+        if (winnerId == "draw")
+            return;
 
-        if (user != null)
+        var winner = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == winnerId);
+        var loser = game.Moves.First(m => m.UserId != winner?.Id).UserId;
+
+        if (winner != null)
+            winner.Rating += 3;
+
+        var loserUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == loser);
+        if (loserUser != null)
+            loserUser.Rating -= 1;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    private async Task SendResultToChat(string result, Game game)
+    {
+        string message;
+        if (result == "draw")
         {
-            await Clients.All.SendAsync("PlayerLeft", user.Name);
+            message = "Ничья!";
+        }
+        else
+        {
+            var winner = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == result);
+            message = $"{winner?.Name} победил!";
         }
 
-        await base.OnDisconnectedAsync(exception);
+        await Clients.Group(game.Id.ToString())
+            .SendAsync("GameResult", message);
     }
 }
