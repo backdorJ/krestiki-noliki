@@ -24,17 +24,21 @@ public class GameHub : Hub
     public async Task JoinRoom(string gameId)
     {
         var game = await _dbContext.Games
-            .Include(x => _dbContext.Users)
+            .Include(x => x.Users)
             .FirstOrDefaultAsync(g => g.Id == Guid.Parse(gameId) && !g.IsFinished);
 
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
-        
         if (currentUser == null)
             throw new ArgumentNullException(nameof(currentUser));
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
+        await Groups.AddToGroupAsync(
+            Context.ConnectionId,
+            gameId);
 
+        if (game.Users.Any(x => x.Id == currentUser.Id))
+            return;
+        
         // Проверка рейтинга
         if (game?.Users.Count() < 2 && currentUser.Rating <= game.MaxRating)
         {
@@ -42,11 +46,16 @@ public class GameHub : Hub
             game.Status = GameStatus.Playing;
             await _dbContext.SaveChangesAsync();
 
-            await Clients.Group(gameId.ToString()).SendAsync("GameStarted", gameId);
+            await Clients.Group(Context.ConnectionId)
+                .SendAsync(
+                    "GameStarted",
+                    gameId);
         }
         else
         {
-            await Clients.Caller.SendAsync("JoinedAsSpectator");
+            await  Clients
+                .Group(Context.ConnectionId)
+                .SendAsync("JoinedAsSpectator");
         }
     }
 
