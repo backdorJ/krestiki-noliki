@@ -47,7 +47,7 @@ const GamesPage = () => {
         getGames()
             .then(response => {
                 if (response.status === 200) {
-                    setGames(response.data.items.slice(0, 3));
+                    setGames(response.data.items);
                 }
             })
     }, []);

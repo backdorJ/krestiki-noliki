@@ -1,20 +1,24 @@
 import {useEffect, useState} from "react";
 import './GamePage.css'
+import {useSignalR} from "../../contexts/signalR";
+import {useParams} from "react-router-dom";
 
 
 const GamePage = () => {
     // Хранение выбора игрока
+    const { id } = useParams()
     const [playerChoice, setPlayerChoice] = useState(null);
     const [opponentChoice, setOpponentChoice] = useState(null);
     const [gameOver, setGameOver] = useState(false);
+    const { connection, connected, startConnection } = useSignalR()
+    const [isGameStarted, setIsGameStarted] = useState(false);
+    const [isPlayer, setIsPlayer] = useState();
 
     const choices = ['rock', 'paper', 'scissors'];
 
     // Логика для обработки выбора
     const handlePlayerChoice = (choice) => {
-        setPlayerChoice(choice);
-        setGameOver(true); // После выбора игрока, заканчиваем игру
-        setOpponentChoice(choices[Math.floor(Math.random() * choices.length)]); // Оппонент делает случайный выбор
+        connection.invoke("MakeMove", id, choice)
     };
 
     // Сброс игры
@@ -24,12 +28,21 @@ const GamePage = () => {
         setGameOver(false);
     };
 
+    useEffect(() => {
+        if (connection) {
+            connection.on("JoinedGameInfo", response => {
+                setIsGameStarted(response.status === 2)
+                setIsPlayer(response.isPlayer)
+            })
+        }
+    }, [connection]);
+
     return (
         <div className="game-container">
             <h1>Rock, Paper, Scissors</h1>
 
             <div className="choices">
-                {!gameOver && (
+                {!gameOver && isPlayer && isGameStarted && (
                     choices.map((choice) => (
                         <button
                             key={choice}
