@@ -20,11 +20,11 @@ public class GameHub : Hub
     }
 
     // Присоединение к комнате
-    public async Task JoinRoom(Guid gameId)
+    public async Task JoinRoom(string gameId)
     {
         var game = await _dbContext.Games
             .Include(x => _dbContext.Users)
-            .FirstOrDefaultAsync(g => g.Id == gameId && !g.IsFinished);
+            .FirstOrDefaultAsync(g => g.Id == Guid.Parse(gameId) && !g.IsFinished);
 
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
