@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TicTacToe.Core;
+using TicTacToe.Core.Hubs;
 using TicTacToe.DAL;
 using TicTacToe.MediatR;
 using Entry = TicTacToe.Core.Entry;
@@ -13,6 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDal(builder.Configuration);
 builder.Services.AddCore();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSignalRCore();
 builder.Services.AddMediator(typeof(Program).Assembly, typeof(Entry).Assembly);
 
 builder.Services.AddAuthentication(options =>
@@ -34,12 +37,19 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddDefaultPolicy(po => po.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var migrator = services.GetRequiredService<Migrator>();
 await migrator.MigrateAsync();
+
+app.UseCors();
 
 if (app.Environment.IsDevelopment())
 {
@@ -49,5 +59,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+app.MapHub<GameHub>("/game-hub");
 
 app.Run();

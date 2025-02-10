@@ -9,5 +9,6 @@ public static class Entry
     public static void AddCore(this IServiceCollection services)
     {
         services.AddScoped<IJwtGenerator, JwtGenerator>();
+        services.AddScoped<IUserContext, UserContext>();
     }
 }
