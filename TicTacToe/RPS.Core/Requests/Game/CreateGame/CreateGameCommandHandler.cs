@@ -34,6 +34,7 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
         {
             RoomName = request.RoomName,
             WhoCreatedName = currentUser.Name,
+            Status = GameStatus.Waiting,
             MaxRating =  request.MaxRating,
             Users = new List<TicTacToe.Domain.Entities.User>()
             {
