@@ -24,11 +24,9 @@ const GamesPage = () => {
                     console.log(response);
                     setGames(prev => [...prev, response]);
 
-                // connection.on("GameStarted", response => {
-                //     if (response) {
-                //         navigate("/game/" + response);
-                //     }
-                // })
+                connection.on("GameStarted", response => {
+                    console.log(111111111111111111111111111111111)
+                })
             });
     }, [connection]);
 

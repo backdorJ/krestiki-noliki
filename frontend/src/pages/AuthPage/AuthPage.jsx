@@ -23,7 +23,7 @@ const AuthPage = (props) => {
         }
 
         if (isRegistration) {
-            body.confirmPassword = password;
+            body.passwordConfirm = password;
             register(body).then(() => {
             })
         }

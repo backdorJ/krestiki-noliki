@@ -18,7 +18,7 @@ const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
 
         createGame(request).then((response) => {
             if (response.status === 200) {
-                navigate("game/" + response.id);
+                navigate("game/" + response.data.id);
             }
         })
 
