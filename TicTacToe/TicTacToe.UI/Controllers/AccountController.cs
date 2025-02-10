@@ -17,7 +17,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        await mediator.Send(new RegisterCommand(request.Name, request.Password), cancellationToken);
+        await mediator.Send(new RegisterCommand(request.Name, request.Password, request.PasswordConfirm), cancellationToken);
         return Ok();
     }
 

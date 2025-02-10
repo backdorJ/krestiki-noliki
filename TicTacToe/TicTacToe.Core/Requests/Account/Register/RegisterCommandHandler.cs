@@ -16,6 +16,9 @@ public class RegisterCommandHandler(IDbContext dbContext) : IRequestHandler<Regi
         if (isExistUser)
             throw new ArgumentException("Username already taken");
         
+        if (request.Password != request.PasswordConfirm)
+            throw new ArgumentException("Passwords do not match");
+        
         var user = new User
         {
             Name = request.Name,

@@ -25,6 +25,9 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(x => x.Name == request.Username, cancellationToken: cancellationToken)
             ?? throw new ArgumentException();
+        
+        if (currentUser.Password != request.Password)
+            throw new ArgumentException("Passwords do not match", nameof(request));
 
         var token = _jwtGenerator.GenerateJwtToken(currentUser.Name, currentUser.Id);
 
