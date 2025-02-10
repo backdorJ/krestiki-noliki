@@ -23,14 +23,14 @@ public class JoinGameCommandHandler(IHubContext<GameHub> gameHubContext, IDbCont
         if (currentUser == null)
             throw new ArgumentNullException(nameof(currentUser));
 
-        if (game.Users.Any(x => x.Id == currentUser.Id))
-            return;
-
         await gameHubContext.Groups.AddToGroupAsync(
             userContext.UserId.ToString(),
             request.GameId.ToString(),
             cancellationToken);
 
+        if (game.Users.Any(x => x.Id == currentUser.Id))
+            return;
+        
         // Проверка рейтинга
         if (game?.Users.Count() < 2 && currentUser.Rating <= game.MaxRating)
         {
@@ -39,7 +39,10 @@ public class JoinGameCommandHandler(IHubContext<GameHub> gameHubContext, IDbCont
             await dbContext.SaveChangesAsync(cancellationToken);
 
             await gameHubContext.Clients.Group(request.GameId.ToString())
-                .SendAsync("GameStarted", request.GameId.ToString(), cancellationToken: cancellationToken);
+                .SendAsync(
+                    "GameStarted",
+                    request.GameId.ToString(),
+                    cancellationToken: cancellationToken);
         }
         else
         {
