@@ -29,6 +29,7 @@ public class GameHub : Hub
 
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
+        
         if (currentUser == null)
             throw new ArgumentNullException(nameof(currentUser));
 
@@ -74,12 +75,12 @@ public class GameHub : Hub
     }
 
     // Совершение хода
-    public async Task MakeMove(Guid gameId, string move)
+    public async Task MakeMove(string gameId, string move)
     {
         var game = await _dbContext.Games
             .Include(g => g.Moves)
             .Include(g => g.Users) // Подключаем пользователей, чтобы их можно было исключить
-            .FirstOrDefaultAsync(g => g.Id == gameId);
+            .FirstOrDefaultAsync(g => g.Id == Guid.Parse(gameId));
 
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
@@ -192,7 +193,8 @@ public class GameHub : Hub
             message = $"{winner?.Name} победил!";
         }
 
-        await Clients.Group(game.Id.ToString())
+        await Clients
+            .Group(game.Id.ToString())
             .SendAsync("GameResult", message);
     }
 }
