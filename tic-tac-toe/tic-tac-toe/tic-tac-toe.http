@@ -1,6 +1,0 @@
-@tic_tac_toe_HostAddress = http://localhost:5023
-
-GET {{tic_tac_toe_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
