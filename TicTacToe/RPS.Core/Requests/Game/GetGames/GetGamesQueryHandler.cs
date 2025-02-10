@@ -15,16 +15,28 @@ public class GetGamesQueryHandler : IRequestHandler<GetGamesQuery, GetGamesRespo
 
     public async Task<GetGamesResponse> Handle(GetGamesQuery request, CancellationToken cancellationToken)
     {
-        var result = await _dbContext.Games
-            .Where(x => !x.IsFinished)
+        var gamesNotFinishedAndNew = await _dbContext.Games
+            .Where(g => g.IsFinished == false)
+            .OrderBy(x => x.CreatedAt)
+            .ToListAsync(cancellationToken: cancellationToken);
+        
+        var gamesFinished = await _dbContext.Games
+            .Where(g => g.IsFinished == true)
+            .OrderBy(x => x.CreatedAt)
+            .ToListAsync(cancellationToken: cancellationToken);
+        
+        var unionGames = gamesNotFinishedAndNew.Union(gamesFinished);
+        
+        var result = unionGames
+            .OrderBy(x => x.CreatedAt)
             .Select(x => new GetGameResponseItem
             {
                 GameId = x.Id,
                 CreateUsername = x.WhoCreatedName,
                 Status = x.Status.ToString(),
-                CreatedUserId = null
+                CreatedUserId = null,
             })
-            .ToListAsync(cancellationToken);
+            .ToList();
 
         return new GetGamesResponse()
         {

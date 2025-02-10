@@ -9,6 +9,8 @@ public class Game : BaseEntity
     public Guid WinnerId { get; set; }
     public string WhoCreatedName { get; set; }
     public bool IsFinished { get; set; } = false;
+
+    public DateTime CreatedAt { get; set; }
     
     public uint MaxRating { get; set; }
 
