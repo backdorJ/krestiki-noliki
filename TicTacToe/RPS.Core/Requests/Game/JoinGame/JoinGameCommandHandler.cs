@@ -23,6 +23,9 @@ public class JoinGameCommandHandler(IHubContext<GameHub> gameHubContext, IDbCont
         if (currentUser == null)
             throw new ArgumentNullException(nameof(currentUser));
 
+        if (game.Users.Any(x => x.Id == currentUser.Id))
+            return;
+
         await gameHubContext.Groups.AddToGroupAsync(
             userContext.UserId.ToString(),
             request.GameId.ToString(),
