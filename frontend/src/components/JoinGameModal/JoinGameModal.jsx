@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./JoinGameModal.css";
+import {createGame} from "../../http/gameHttp";
 
 const JoinGameModal = ({ isOpen, onClose, onSubmit }) => {
     const [roomName, setRoomName] = useState("");
@@ -7,11 +8,14 @@ const JoinGameModal = ({ isOpen, onClose, onSubmit }) => {
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ roomName, maxRating });
-        setRoomName("");
-        setMaxRating("");
+    const handleSubmit = () => {
+        const request = {
+            roomName,
+            maxRating
+        }
+
+        createGame(request)
+
         onClose();
     };
 
@@ -39,7 +43,7 @@ const JoinGameModal = ({ isOpen, onClose, onSubmit }) => {
                         />
                     </label>
                     <div className="modal-buttons">
-                        <button type="submit" className="btn-create">Create</button>
+                        <button onClick={handleSubmit} className="btn-create">Create</button>
                         <button type="button" className="btn-cancel" onClick={onClose}>Cancel</button>
                     </div>
                 </form>
