@@ -1,6 +1,6 @@
-﻿using TicTacToe.Domain.Entities;
+﻿using RPS.Domain.Entities;
 
-namespace RPS.Domain.Entities;
+namespace TicTacToe.Domain.Entities;
 
 public class User : BaseEntity
 {
