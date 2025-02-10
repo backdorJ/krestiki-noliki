@@ -11,5 +11,5 @@ export const getGames = (body) => {
 }
 
 export const joinGame = (gameId) => {
-    return $authClient.get(baseUrl + "join-game");
+    return $authClient.get(baseUrl + "join-game/" + gameId);
 }

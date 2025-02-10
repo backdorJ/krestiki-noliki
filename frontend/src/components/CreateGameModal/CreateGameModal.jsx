@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import "./CreateGameModal.css";
 import {createGame} from "../../http/gameHttp";
+import {useNavigate} from "react-router-dom";
 
 const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
     const [roomName, setRoomName] = useState("");
     const [maxRating, setMaxRating] = useState("");
+    const navigate = useNavigate();
 
     if (!isOpen) return null;
 
@@ -14,7 +16,11 @@ const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
             maxRating
         }
 
-        createGame(request)
+        createGame(request).then((response) => {
+            if (response.status === 200) {
+                navigate("game/" + response.id);
+            }
+        })
 
         onClose();
     };

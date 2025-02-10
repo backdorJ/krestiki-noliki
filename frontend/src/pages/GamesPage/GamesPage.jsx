@@ -24,11 +24,11 @@ const GamesPage = () => {
                     console.log(response);
                     setGames(prev => [...prev, response]);
 
-                connection.on("GameStarted", response => {
-                    if (response) {
-                        navigate("/game/" + response);
-                    }
-                })
+                // connection.on("GameStarted", response => {
+                //     if (response) {
+                //         navigate("/game/" + response);
+                //     }
+                // })
             });
     }, [connection]);
 
@@ -47,6 +47,11 @@ const GamesPage = () => {
 
     const join = (gameId) => {
         joinGame(gameId)
+            .then(response => {
+                if (response.status === 200) {
+                    navigate(`/game/${gameId}`);
+                }
+            })
     };
 
     return (
