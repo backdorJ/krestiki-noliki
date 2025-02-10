@@ -33,7 +33,7 @@
       - rps-network
 
   mongo:
-    image: mongo:6
+    image: mongo
     ports:
       - "27017:27017"
     volumes:

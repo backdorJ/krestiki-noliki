@@ -2,17 +2,11 @@
 
 namespace TicTacToe.Core.Requests.Account.Register;
 
-public class RegisterCommand : IRequest
+public class RegisterCommand(string name, string password, string passwordConfirm) : IRequest
 {
-    public RegisterCommand(string name, string password, string passwordConfirm)
-    {
-        Password = password;
-        Name = name;
-    }
+    public string Name { get; set; } = name;
 
-    public string Name { get; set; }
-    
-    public string Password { get; set; }
+    public string Password { get; set; } = password;
 
-    public string PasswordConfirm { get; set; }
+    public string PasswordConfirm { get; set; } = passwordConfirm;
 }
