@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RPS.Core.Requests.Account.Register;
 using TicTacToe.Core.Requests.Account.Login;
 using TicTacToe.Core.Requests.Account.Register;
 using TicTacToe.MediatR;

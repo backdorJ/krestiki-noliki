@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using RPS.Core.Enums;
+using RPS.Core.Requests.Game.GetGames;
 using TicTacToe.Core.Hubs;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.MediatR;
@@ -30,6 +32,7 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
         var game = new Domain.Entities.Game
         {
             RoomName = request.RoomName,
+            WhoCreatedName = currentUser.Name,
             Users = new List<Domain.Entities.User>()
             {
                 currentUser
@@ -39,11 +42,12 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
         await _dbContext.Games.AddAsync(game, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        await _hubContext.Clients.All.SendAsync("GetCreatedGameNotify", new
+        await _hubContext.Clients.All.SendAsync("GetCreatedGameNotify", new GetGameResponseItem
         {
             GameId = game.Id,
             CreateUsername = currentUser.Name,
-            UserId = currentUser.Id
+            Status = GameStatus.Waiting.ToString(),
+            CreatedUserId = currentUser.Id.ToString(),
         }, cancellationToken);
         
         return new CreateGameResponse
