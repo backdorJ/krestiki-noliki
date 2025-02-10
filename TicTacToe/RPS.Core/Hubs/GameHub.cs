@@ -65,16 +65,6 @@ public class GameHub : Hub
                         game.Status
                     });
         }
-        else
-        {
-            await  Clients
-                .Group(gameId)
-                .SendAsync("JoinedGameInfo", new
-                {
-                    IsPlayer = false,
-                    game?.Status
-                });
-        }
     }
 
     // Совершение хода
