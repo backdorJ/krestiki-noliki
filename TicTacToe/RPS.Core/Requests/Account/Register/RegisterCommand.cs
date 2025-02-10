@@ -1,6 +1,6 @@
 ﻿using TicTacToe.MediatR;
 
-namespace TicTacToe.Core.Requests.Account.Register;
+namespace RPS.Core.Requests.Account.Register;
 
 public class RegisterCommand : IRequest
 {
@@ -8,6 +8,7 @@ public class RegisterCommand : IRequest
     {
         Password = password;
         Name = name;
+        PasswordConfirm = passwordConfirm;
     }
 
     public string Name { get; set; }
