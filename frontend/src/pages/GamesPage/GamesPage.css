@@ -1,0 +1,79 @@
+/* Стили для контейнера всей страницы */
+.game-list-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-list-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.create-game-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.create-game-button:hover {
+    background-color: #45a049;
+}
+
+/* Стили для списка карточек (столбец) */
+.game-list {
+    display: flex;
+    flex-direction: column; /* Выставляем карточки в столбец */
+    gap: 15px;
+    align-items: center; /* Центрируем карточки по горизонтали */
+    width: 100%;
+}
+
+/* Стили для каждой карточки (шире) */
+.game-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    width: 300px; /* Увеличиваем ширину карточки */
+    height: 120px; /* Уменьшаем высоту карточки */
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрируем содержимое по вертикали */
+    position: relative; /* Для абсолютного позиционирования кнопки */
+}
+
+/* Стили для кнопки "Присоединиться" */
+.join-game-button {
+    position: absolute; /* Абсолютное позиционирование */
+    bottom: 50%; /* Размещаем кнопку по центру по вертикали */
+    right: 10px; /* Размещаем кнопку справа */
+    transform: translateY(50%); /* Центрируем кнопку по вертикали относительно её размера */
+    padding: 8px 15px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.join-game-button:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для содержания карточки */
+.game-card-content {
+    margin-bottom: 10px; /* Отступ между контентом и кнопкой */
+}

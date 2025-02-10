@@ -1,0 +1,93 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.players {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.player {
+    flex: 1;
+    padding: 20px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    margin: 0 10px;
+}
+
+.choices button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.choices button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.game-controls {
+    margin: 20px 0;
+}
+
+.game-controls button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.game-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.game-result {
+    margin-top: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.observers {
+    margin-top: 30px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.observers h3 {
+    margin-bottom: 10px;
+}
+
+.observers p {
+    font-size: 1.1em;
+    color: #333;
+}
