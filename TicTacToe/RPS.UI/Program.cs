@@ -37,9 +37,15 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+// Настройка CORS
 builder.Services.AddCors(opt =>
 {
-    opt.AddDefaultPolicy(po => po.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    opt.AddPolicy("AllowAll", policy =>
+            policy
+                .AllowAnyOrigin()       // Разрешить любой источник (небезопасно для продакшн)
+                .AllowAnyMethod()       // Разрешить любые методы
+                .AllowAnyHeader()       // Разрешить любые заголовки
+    );
 });
 
 var app = builder.Build();
@@ -48,8 +54,8 @@ using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var migrator = services.GetRequiredService<Migrator>();
 await migrator.MigrateAsync();
-
-app.UseCors();
+// Подключаем CORS до маршрутизации
+app.UseCors("AllowAll"); // Указываем имя политики явно
 
 if (app.Environment.IsDevelopment())
 {
