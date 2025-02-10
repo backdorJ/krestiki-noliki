@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RPS.Core.Interfaces;
 using RPS.Domain.Entities;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Domain.Entities;

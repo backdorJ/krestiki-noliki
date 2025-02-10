@@ -2,7 +2,7 @@
 using RPS.Domain.Entities;
 using TicTacToe.Domain.Entities;
 
-namespace TicTacToe.Core.Interfaces;
+namespace RPS.Core.Interfaces;
 
 public interface IDbContext
 {

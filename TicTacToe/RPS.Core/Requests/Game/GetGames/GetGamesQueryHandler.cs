@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RPS.Core.Interfaces;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.MediatR;
 

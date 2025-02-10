@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RPS.Core.Interfaces;
 using TicTacToe.Core.Interfaces;
+using TicTacToe.Core.Requests.Account.Login;
 using TicTacToe.MediatR;
 
-namespace TicTacToe.Core.Requests.Account.Login;
+namespace RPS.Core.Requests.Account.Login;
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse>
 {

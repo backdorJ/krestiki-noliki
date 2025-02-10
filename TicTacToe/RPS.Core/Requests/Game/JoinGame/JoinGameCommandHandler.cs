@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RPS.Core.Enums;
 using RPS.Core.Hubs;
+using RPS.Core.Interfaces;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.MediatR;
 
@@ -13,7 +14,7 @@ public class JoinGameCommandHandler(IHubContext<GameHub> gameHubContext, IDbCont
     public async Task Handle(JoinGameCommand request, CancellationToken cancellationToken)
     {
         var game = await dbContext.Games
-            .Include(x => dbContext.Users)
+            .Include(x => x.Users)
             .FirstOrDefaultAsync(g => g.Id == request.GameId && !g.IsFinished, cancellationToken: cancellationToken);
 
         var currentUser = await dbContext.Users

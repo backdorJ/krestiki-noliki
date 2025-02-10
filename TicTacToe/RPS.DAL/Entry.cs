@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RPS.Core.Interfaces;
 using TicTacToe.Core.Interfaces;
 
 namespace TicTacToe.DAL;

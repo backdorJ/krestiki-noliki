@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RPS.Core.Enums;
+using RPS.Core.Interfaces;
 using RPS.Domain.Entities;
 using TicTacToe.Core.Interfaces;
 

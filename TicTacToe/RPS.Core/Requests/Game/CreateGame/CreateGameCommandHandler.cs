@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RPS.Core.Enums;
 using RPS.Core.Hubs;
+using RPS.Core.Interfaces;
 using RPS.Core.Requests.Game.GetGames;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Requests.Game.CreateGame;
