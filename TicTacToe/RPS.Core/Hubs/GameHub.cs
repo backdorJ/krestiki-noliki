@@ -6,6 +6,7 @@ using TicTacToe.Core.Interfaces;
 
 namespace RPS.Core.Hubs;
 
+[Authorize]
 public class GameHub : Hub
 {
     private readonly IUserContext _userContext;

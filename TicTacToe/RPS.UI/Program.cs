@@ -35,6 +35,23 @@ builder.Services.AddAuthentication(options =>
             ValidAudience = builder.Configuration["Jwt:Issuer"] ?? "TicTacToeApp",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "super_secret_key_12345"))
         };
+        
+        // ВАЖНО: разрешаем аутентификацию через WebSocket
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                // Проверяем, что запрос направлен к SignalR-хабу
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/game-hub"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 // Настройка CORS
