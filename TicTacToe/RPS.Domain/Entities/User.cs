@@ -1,6 +1,6 @@
-﻿using RPS.Domain.Entities;
+﻿using TicTacToe.Domain.Entities;
 
-namespace TicTacToe.Domain.Entities;
+namespace RPS.Domain.Entities;
 
 public class User : BaseEntity
 {
@@ -8,7 +8,7 @@ public class User : BaseEntity
 
     public string Password { get; set; } = null!;
 
-    public string HubConnection { get; set; }
+    public string HubConnection { get; set; } = string.Empty;
 
     public uint Rating { get; set; }
 

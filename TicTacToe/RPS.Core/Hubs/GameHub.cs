@@ -126,7 +126,7 @@ public class GameHub : Hub
         var currentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
         if (currentUser != null)
         {
-            currentUser.HubConnection = Context.ConnectionId;
+            currentUser.HubConnection = Context.ConnectionId ?? string.Empty;
             await _dbContext.SaveChangesAsync();
         }
         await base.OnConnectedAsync();

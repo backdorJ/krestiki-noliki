@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RPS.Core.Interfaces;
 using RPS.Core.Requests.Account.Register;
+using RPS.Domain.Entities;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Domain.Entities;
 using TicTacToe.MediatR;

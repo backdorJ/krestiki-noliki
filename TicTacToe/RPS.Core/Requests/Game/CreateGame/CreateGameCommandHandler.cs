@@ -4,6 +4,7 @@ using RPS.Core.Enums;
 using RPS.Core.Hubs;
 using RPS.Core.Interfaces;
 using RPS.Core.Requests.Game.GetGames;
+using RPS.Domain.Entities;
 using TicTacToe.Core.Interfaces;
 using TicTacToe.Core.Requests.Game.CreateGame;
 using TicTacToe.MediatR;
@@ -37,7 +38,7 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
             WhoCreatedName = currentUser.Name,
             Status = GameStatus.Waiting,
             MaxRating =  request.MaxRating,
-            Users = new List<TicTacToe.Domain.Entities.User>()
+            Users = new List<User>()
             {
                 currentUser
             }
