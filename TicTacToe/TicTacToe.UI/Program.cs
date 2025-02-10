@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddDal(builder.Configuration);
 builder.Services.AddCore();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSignalRCore();
+builder.Services.AddSignalR();
 builder.Services.AddMediator(typeof(Program).Assembly, typeof(Entry).Assembly);
 
 builder.Services.AddAuthentication(options =>
