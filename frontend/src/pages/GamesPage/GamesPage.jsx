@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import './GamesPage.css';
 import {useSignalR} from "../../contexts/signalR";
-import {createGame, getGames} from "../../http/gameHttp";
-import JoinGameModal from "../../components/JoinGameModal/JoinGameModal";
+import {createGame, getGames, joinGame} from "../../http/gameHttp";
+import CreateGameModal from "../../components/CreateGameModal/CreateGameModal";
 import {useNavigate} from "react-router-dom";
 
 const GamesPage = () => {
@@ -26,7 +26,7 @@ const GamesPage = () => {
 
                 connection.on("GameStarted", response => {
                     if (response) {
-                        navigate("/GamesPage");
+                        navigate("/game/" + response);
                     }
                 })
             });
@@ -45,8 +45,8 @@ const GamesPage = () => {
         setIsModalOpen(true)
     };
 
-    const joinGame = (gameId) => {
-        connection.invoke("JoinRoom", gameId);
+    const join = (gameId) => {
+        joinGame(gameId)
     };
 
     return (
@@ -62,13 +62,13 @@ const GamesPage = () => {
                             <h3>{game.gameId.slice(0, 10)}</h3>
                             <p>Status: {game.status}</p>
                         </div>
-                        <button className="join-game-button" onClick={() => joinGame(game.gameId)}>
+                        <button className="join-game-button" onClick={() => join(game.gameId)}>
                             Join Game
                         </button>
                     </div>
                 ))}
             </div>
-            <JoinGameModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <CreateGameModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 };
