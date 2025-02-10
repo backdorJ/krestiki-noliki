@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TicTacToe.Domain.Entities;
+using RPS.Domain.Entities;
 
-namespace TicTacToe.DAL.Configurations;
+namespace RPS.DAL.Configurations;
 
 public class GameConfiguration : IEntityTypeConfiguration<Game>
 {
@@ -15,5 +15,10 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
 
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Games);
+        
+        builder.HasMany(x => x.Moves)
+            .WithOne(x => x.Game)
+            .HasForeignKey(x => x.GameId)
+            .HasPrincipalKey(x => x.Id);
     }
 }

@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RPS.Core.Enums;
+using RPS.Core.Hubs;
 using RPS.Core.Requests.Game.GetGames;
-using TicTacToe.Core.Hubs;
 using TicTacToe.Core.Interfaces;
+using TicTacToe.Core.Requests.Game.CreateGame;
 using TicTacToe.MediatR;
 
-namespace TicTacToe.Core.Requests.Game.CreateGame;
+namespace RPS.Core.Requests.Game.CreateGame;
 
 public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, CreateGameResponse>
 {
@@ -29,11 +30,12 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
             .FirstOrDefaultAsync(x => x.Id == _userContext.UserId, cancellationToken)
             ?? throw new ApplicationException($"User with id {_userContext.UserId} not found");
 
-        var game = new Domain.Entities.Game
+        var game = new RPS.Domain.Entities.Game
         {
             RoomName = request.RoomName,
             WhoCreatedName = currentUser.Name,
-            Users = new List<Domain.Entities.User>()
+            MaxRating =  request.MaxRating,
+            Users = new List<TicTacToe.Domain.Entities.User>()
             {
                 currentUser
             }

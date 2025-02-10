@@ -1,8 +1,8 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using RPS.Core.Hubs;
 using TicTacToe.Core;
-using TicTacToe.Core.Hubs;
 using TicTacToe.DAL;
 using TicTacToe.MediatR;
 using Entry = TicTacToe.Core.Entry;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RPS.Core.Requests.Game.CreateGame;
 using RPS.Core.Requests.Game.GetGames;
 using TicTacToe.Core.Requests.Game.CreateGame;
 using TicTacToe.MediatR;
@@ -21,7 +22,7 @@ public class GameController : ControllerBase
     [HttpPost("create-game")]
     public async Task<CreateGameResponse> Handle(CreateGameRequest request, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new CreateGameCommand(request.RoomName), cancellationToken);
+        var result = await _mediator.Send(new CreateGameCommand(request.RoomName, request.MaxRating), cancellationToken);
         
         return new CreateGameResponse
         {
