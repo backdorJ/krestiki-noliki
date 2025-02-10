@@ -58,7 +58,7 @@ public class GameHub : Hub
 
             await Clients.Group(gameId)
                 .SendAsync(
-                    "GameStarted",
+                    "JoinedGameInfo",
                     new
                     {
                         IsPlayer = true,
