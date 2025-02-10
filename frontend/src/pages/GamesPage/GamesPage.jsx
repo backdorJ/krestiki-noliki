@@ -19,15 +19,28 @@ const GamesPage = () => {
 
     useEffect(() => {
         if (connection)
+        {
             connection.on("GetCreatedGameNotify", response => {
                 if (response.arguments)
                     console.log(response);
                     setGames(prev => [...prev, response]);
 
-                connection.on("GameStarted", response => {
-                    console.log(111111111111111111111111111111111)
-                })
+
+                console.log('11111111111111111111111111-----------------')
+                console.log('get')
             });
+
+
+            connection.on("JoinedGameInfo", response => {
+                console.log("JoinedGameInfo")
+                console.log(response)
+            })
+
+            connection.on("GameStarted", response => {
+                console.log("GameStarted")
+                console.log(response)
+            })
+        }
     }, [connection]);
 
     useEffect(() => {
@@ -44,12 +57,8 @@ const GamesPage = () => {
     };
 
     const join = (gameId) => {
-        joinGame(gameId)
-            .then(response => {
-                if (response.status === 200) {
-                    navigate(`/game/${gameId}`);
-                }
-            })
+        connection.invoke("JoinRoom", gameId)
+        navigate(`/game/${gameId}`);
     };
 
     return (

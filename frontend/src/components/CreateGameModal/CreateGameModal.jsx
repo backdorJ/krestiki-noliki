@@ -1,12 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./CreateGameModal.css";
-import {createGame} from "../../http/gameHttp";
+import {useSignalR} from "../../contexts/signalR";
+import {createGame, joinGame} from "../../http/gameHttp";
 import {useNavigate} from "react-router-dom";
 
 const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
     const [roomName, setRoomName] = useState("");
+    const { connection, connected, startConnection } = useSignalR()
     const [maxRating, setMaxRating] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!connected) {
+            startConnection();
+        }
+    }, []);
+    
+    useEffect(() => {
+        if (connection)
+        {
+            connection.on("JoinedGameInfo", response => {
+                console.log("JoinedGameInfo")
+                console.log(response)
+            })
+        }
+    }, [connection]);
 
     if (!isOpen) return null;
 
@@ -18,6 +36,7 @@ const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
 
         createGame(request).then((response) => {
             if (response.status === 200) {
+                connection.invoke("JoinRoom", response.data.id)
                 navigate("game/" + response.data.id);
             }
         })

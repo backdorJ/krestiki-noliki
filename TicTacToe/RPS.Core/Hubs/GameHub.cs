@@ -37,7 +37,15 @@ public class GameHub : Hub
             gameId);
 
         if (game.Users.Any(x => x.Id == currentUser.Id))
+        {
+            await Clients.Group(gameId)
+                .SendAsync("JoinedGameInfo", new
+                {
+                    IsPlayer = true,
+                });
+
             return;
+        }
         
         // Проверка рейтинга
         if (game?.Users.Count() < 2 && currentUser.Rating <= game.MaxRating)
@@ -46,33 +54,54 @@ public class GameHub : Hub
             game.Status = GameStatus.Playing;
             await _dbContext.SaveChangesAsync();
 
-            await Clients.Group(Context.ConnectionId)
+            await Clients.Group(gameId)
                 .SendAsync(
                     "GameStarted",
-                    gameId);
+                    new
+                    {
+                        IsPlayer = true,
+                    });
         }
         else
         {
             await  Clients
-                .Group(Context.ConnectionId)
-                .SendAsync("JoinedAsSpectator");
+                .Group(gameId)
+                .SendAsync("JoinedGameInfo", new
+                {
+                    IsPlayer = false,
+                });
         }
     }
 
     // Совершение хода
     public async Task MakeMove(Guid gameId, string move)
     {
-        var game = await _dbContext.Games.Include(g => g.Moves).FirstOrDefaultAsync(g => g.Id == gameId);
-        var currentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
+        var game = await _dbContext.Games
+            .Include(g => g.Moves)
+            .Include(g => g.Users) // Подключаем пользователей, чтобы их можно было исключить
+            .FirstOrDefaultAsync(g => g.Id == gameId);
+
+        var currentUser = await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
 
         if (currentUser == null || game == null || game.IsFinished)
             return;
 
+        // Сохраняем ход
         game.Moves.Add(new Move { UserId = currentUser.Id, Choice = move });
         await _dbContext.SaveChangesAsync();
 
-        await Clients.Group(gameId.ToString()).SendAsync("MoveMade", new { Player = currentUser.Name, Move = move });
+        // Получаем список всех connectionId игроков в этой игре
+        var playerConnectionIds = game.Users
+            .Where(u => u.Id != currentUser.Id) // Исключаем текущего игрока, если нужно
+            .Select(u => u.HubConnection)        // Предполагается, что у пользователя есть ConnectionId
+            .ToList();
 
+        // Отправляем сообщение всем, кроме игроков
+        await Clients.GroupExcept(gameId.ToString(), playerConnectionIds)
+            .SendAsync("MoveMade", new { Message = $"The Player made a move - {move}" });
+
+        // Логика определения победителя
         if (game.Moves.Count == 2)
         {
             var result = DetermineWinner(game);
@@ -86,6 +115,17 @@ public class GameHub : Hub
             await Task.Delay(5000);
             await StartNewRound(game);
         }
+    }
+    
+    public override async Task OnConnectedAsync()
+    {
+        var currentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
+        if (currentUser != null)
+        {
+            currentUser.HubConnection = Context.ConnectionId;
+            await _dbContext.SaveChangesAsync();
+        }
+        await base.OnConnectedAsync();
     }
 
     private async Task StartNewRound(Game previousGame)
