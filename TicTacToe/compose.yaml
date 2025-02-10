@@ -1,15 +1,15 @@
 ﻿services:
-  tic.ui:
+  rps.ui:
     build:
       context: .
-      dockerfile: TicTacToe.UI/Dockerfile
+      dockerfile: RPS.UI/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - PostgresConnectionString=Host=postgres;Database=TicTacToe;Username=postgres;Password=root
+      - PostgresConnectionString=Host=postgres;Database=RPS;Username=postgres;Password=root
       - ConnectionStrings__Mongo=mongodb://mongo:27017
       - RabbitMQ__Host=rabbitmq
       - Jwt__Key=super_secret_key_12345_1313123123123123123211111111111111111111111111111111111111111111111111111111111111111
-      - Jwt__Issuer=TicTacToeApp
+      - Jwt__Issuer=RPSApp
     depends_on:
         - postgres
         - mongo
@@ -24,7 +24,7 @@
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: TicTacToe
+      POSTGRES_DB: RPS
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

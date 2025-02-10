@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>TicTacToe.DAL</RootNamespace>
+        <RootNamespace>RPS.DAL</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -20,8 +20,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TicTacToe.Core\TicTacToe.Core.csproj" />
-      <ProjectReference Include="..\TicTacToe.Domain\TicTacToe.Domain.csproj" />
+      <ProjectReference Include="..\RPS.Core\RPS.Core.csproj" />
+      <ProjectReference Include="..\RPS.Domain\RPS.Domain.csproj" />
     </ItemGroup>
 
 </Project>

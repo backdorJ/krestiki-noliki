@@ -25,7 +25,7 @@ namespace TicTacToe.DAL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TicTacToe.Domain.Entities.User", b =>
+            modelBuilder.Entity("RPS.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

@@ -37,7 +37,7 @@ namespace TicTacToe.DAL.Migrations
                     b.ToTable("GameUser");
                 });
 
-            modelBuilder.Entity("TicTacToe.Domain.Entities.Game", b =>
+            modelBuilder.Entity("RPS.Domain.Entities.Game", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace TicTacToe.DAL.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("TicTacToe.Domain.Entities.User", b =>
+            modelBuilder.Entity("RPS.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,13 +86,13 @@ namespace TicTacToe.DAL.Migrations
 
             modelBuilder.Entity("GameUser", b =>
                 {
-                    b.HasOne("TicTacToe.Domain.Entities.Game", null)
+                    b.HasOne("RPS.Domain.Entities.Game", null)
                         .WithMany()
                         .HasForeignKey("GamesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TicTacToe.Domain.Entities.User", null)
+                    b.HasOne("RPS.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>TicTacToe</RootNamespace>
+        <RootNamespace>RPS</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
@@ -27,9 +27,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TicTacToe.Core\TicTacToe.Core.csproj" />
-      <ProjectReference Include="..\TicTacToe.DAL\TicTacToe.DAL.csproj" />
-      <ProjectReference Include="..\TicTacToe.MediatR\TicTacToe.MediatR.csproj" />
+      <ProjectReference Include="..\RPS.Core\RPS.Core.csproj" />
+      <ProjectReference Include="..\RPS.DAL\RPS.DAL.csproj" />
+      <ProjectReference Include="..\RPS.MediatR\RPS.MediatR.csproj" />
     </ItemGroup>
 
     <ItemGroup>
