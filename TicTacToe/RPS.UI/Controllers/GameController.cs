@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RPS.Core.Requests.Game.GetGames;
 using TicTacToe.Core.Requests.Game.CreateGame;
 using TicTacToe.MediatR;
 
-namespace TicTacToe.Controllers;
+namespace RPS.Controllers;
 
 [ApiController]
 [Authorize]
@@ -26,5 +27,12 @@ public class GameController : ControllerBase
         {
             Id = result.Id
         };
+    }
+
+    [HttpGet("get-games")]
+    public async Task<GetGamesResponse> GetGames(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetGamesQuery(), cancellationToken);
+        return result;
     }
 }
