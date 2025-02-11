@@ -7,7 +7,7 @@ namespace RPS.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+//[Authorize]
 public class UserController(IMediator mediator) : ControllerBase
 {
     [HttpGet("get-rate-users")]

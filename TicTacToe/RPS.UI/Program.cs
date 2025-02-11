@@ -1,11 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using RPS.Core;
 using RPS.Core.Hubs;
+using RPS.DAL;
 using TicTacToe.Core;
 using TicTacToe.DAL;
 using TicTacToe.MediatR;
-using Entry = TicTacToe.Core.Entry;
+using Entry = RPS.Core.Entry;
 
 var builder = WebApplication.CreateBuilder(args);
 

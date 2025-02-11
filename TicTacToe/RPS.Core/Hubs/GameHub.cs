@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using RPS.Core.Enums;
 using RPS.Core.Interfaces;
+using RPS.Core.Services;
 using RPS.Domain.Entities;
 using TicTacToe.Core.Interfaces;
 
@@ -13,11 +15,13 @@ public class GameHub : Hub
 {
     private readonly IUserContext _userContext;
     private readonly IDbContext _dbContext;
+    private readonly MongoDbService _mongoDbService;
 
-    public GameHub(IUserContext userContext, IDbContext dbContext)
+    public GameHub(IUserContext userContext, IDbContext dbContext, MongoDbService mongoDbService)
     {
         _userContext = userContext;
         _dbContext = dbContext;
+        _mongoDbService = mongoDbService;
     }
 
     // Присоединение к комнате
@@ -29,7 +33,7 @@ public class GameHub : Hub
 
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
-        
+
         if (currentUser == null)
             throw new ArgumentNullException(nameof(currentUser));
 
@@ -48,7 +52,7 @@ public class GameHub : Hub
 
             return;
         }
-        
+
         // Проверка рейтинга
         if (game?.Users.Count() < 2 && currentUser.Rating <= game.MaxRating)
         {
@@ -88,7 +92,7 @@ public class GameHub : Hub
         // Получаем список всех connectionId игроков в этой игре
         var playerConnectionIds = game.Users
             .Where(u => u.Id != currentUser.Id) // Исключаем текущего игрока, если нужно
-            .Select(u => u.HubConnection)        // Предполагается, что у пользователя есть ConnectionId
+            .Select(u => u.HubConnection) // Предполагается, что у пользователя есть ConnectionId
             .ToList();
 
         // Отправляем сообщение всем, кроме игроков
@@ -110,7 +114,7 @@ public class GameHub : Hub
             await StartNewRound(game);
         }
     }
-    
+
     public override async Task OnConnectedAsync()
     {
         var currentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
@@ -119,6 +123,7 @@ public class GameHub : Hub
             currentUser.HubConnection = Context.ConnectionId ?? string.Empty;
             await _dbContext.SaveChangesAsync();
         }
+
         await base.OnConnectedAsync();
     }
 
@@ -160,24 +165,74 @@ public class GameHub : Hub
         if (winnerId == "draw")
             return;
 
+        // Получение данных из EF (только для идентификации пользователей)
         var winner = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == winnerId);
         var loser = game.Moves.First(m => m.UserId != winner?.Id).UserId;
-
-        if (winner != null)
-            winner.Rating += 3;
-
         var loserUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == loser);
-        if (loserUser != null)
-            loserUser.Rating -= 1;
-        
-        await Clients
-            .Group(game.Id.ToString())
-            .SendAsync(
-                "GameResult",
-                new {Message =  $"Rating player: {winner?.Name} - {winner?.Rating}" +
-                                $"\nRating player: {loserUser?.Name} - {loserUser?.Rating}"});
 
-        await _dbContext.SaveChangesAsync();
+        RatingMongo winnerRating = null;
+        RatingMongo loserRating = null;
+        
+        if (winner != null)
+        {
+            winnerRating = await _mongoDbService.Ratings
+                .Find(r => r.UserId == winner.Id.ToString())
+                .FirstOrDefaultAsync();
+
+            if (winnerRating == null)
+            {
+                // Если рейтинг не существует — создаём
+                winnerRating = new RatingMongo
+                {
+                    UserId = winner.Id.ToString(),
+                    UserName = winner.Name,
+                    Rating = 3
+                };
+                await _mongoDbService.Ratings.InsertOneAsync(winnerRating);
+            }
+            else
+            {
+                // Обновляем рейтинг
+                winnerRating.Rating += 3;
+                await _mongoDbService.Ratings.ReplaceOneAsync(
+                    r => r.UserId == winner.Id.ToString(),
+                    winnerRating);
+            }
+        }
+
+        if (loserUser != null)
+        {
+            loserRating = await _mongoDbService.Ratings
+                .Find(r => r.UserId == loserUser.Id.ToString())
+                .FirstOrDefaultAsync();
+
+            if (loserRating == null)
+            {
+                loserRating = new RatingMongo
+                {
+                    UserId = loserUser.Id.ToString(),
+                    UserName = loserUser.Name,
+                    Rating = -1
+                };
+                await _mongoDbService.Ratings.InsertOneAsync(loserRating);
+            }
+            else
+            {
+                loserRating.Rating -= 1;
+                await _mongoDbService.Ratings.ReplaceOneAsync(
+                    r => r.UserId == loserUser.Id.ToString(),
+                    loserRating);
+            }
+        }
+        
+        // Отправка результата в группу
+        await Clients.Group(game.Id.ToString()).SendAsync(
+            "GameResult",
+            new
+            {
+                Message = $"Rating player: {winner?.Name} - {winnerRating?.Rating}\n" +
+                          $"Rating player: {loserUser?.Name} - {loserRating?.Rating}"
+            });
     }
 
     private async Task SendResultToChat(string result, Game game)
@@ -195,6 +250,6 @@ public class GameHub : Hub
 
         await Clients
             .Group(game.Id.ToString())
-            .SendAsync("GameResult", new {Message = winnerMessage});
+            .SendAsync("GameResult", new { Message = winnerMessage });
     }
 }
