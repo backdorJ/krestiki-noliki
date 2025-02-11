@@ -10,8 +10,6 @@ public class User : BaseEntity
 
     public string HubConnection { get; set; } = string.Empty;
 
-    public int Rating { get; set; } = 0;
-
     public List<Game> Games { get; set; } = new List<Game>();
 
     public List<Move> Moves { get; set; } = new List<Move>();

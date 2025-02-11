@@ -52,9 +52,28 @@ public class GameHub : Hub
 
             return;
         }
+        
+        RatingMongo rating = null;
+        
+        var userRating = await _mongoDbService.Ratings
+            .Find(r => r.UserId == currentUser.Id.ToString())
+            .FirstOrDefaultAsync();
+        
+        if (userRating == null)
+        {
+            rating = new RatingMongo
+            {
+                UserId = currentUser.Id.ToString(),
+                UserName = currentUser.Name,
+                Rating = 0
+            };
+            await _mongoDbService.Ratings.InsertOneAsync(rating);
+        }
+        
+        var currentRating = rating?.Rating ?? userRating?.Rating ?? 0;
 
         // Проверка рейтинга
-        if (game?.Users.Count() < 2 && currentUser.Rating <= game.MaxRating)
+        if (game?.Users.Count() < 2 && currentRating <= game.MaxRating)
         {
             game.Users.Add(currentUser);
             game.Status = GameStatus.Playing;
