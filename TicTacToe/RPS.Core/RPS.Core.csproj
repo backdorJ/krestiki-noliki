@@ -10,9 +10,11 @@
     <ItemGroup>
       <ProjectReference Include="..\RPS.Domain\RPS.Domain.csproj" />
       <ProjectReference Include="..\RPS.MediatR\RPS.MediatR.csproj" />
+      <ProjectReference Include="..\RPS.Shared\RPS.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="MassTransit.Abstractions" Version="8.3.6" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />

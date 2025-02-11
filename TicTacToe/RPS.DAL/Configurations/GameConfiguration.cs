@@ -10,8 +10,9 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.IsFinished);
-        builder.Property(x => x.RoomName).HasDefaultValue("TicTacToe Room");
+        builder.Property(x => x.RoomName).HasDefaultValue("RPS Room");
         builder.Property(x => x.WinnerId);
+        builder.Property(x => x.WhoCreatedName).HasDefaultValue("RPS");
 
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Games);

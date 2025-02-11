@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
@@ -6,6 +7,7 @@ using RPS.Core.Enums;
 using RPS.Core.Interfaces;
 using RPS.Core.Services;
 using RPS.Domain.Entities;
+using RPS.Shared.Models;
 using TicTacToe.Core.Interfaces;
 
 namespace RPS.Core.Hubs;
@@ -16,12 +18,14 @@ public class GameHub : Hub
     private readonly IUserContext _userContext;
     private readonly IDbContext _dbContext;
     private readonly MongoDbService _mongoDbService;
+    private readonly IPublishEndpoint _publishEndpoint; 
 
-    public GameHub(IUserContext userContext, IDbContext dbContext, MongoDbService mongoDbService)
+    public GameHub(IUserContext userContext, IDbContext dbContext, MongoDbService mongoDbService, IPublishEndpoint publishEndpoint)
     {
         _userContext = userContext;
         _dbContext = dbContext;
         _mongoDbService = mongoDbService;
+        _publishEndpoint = publishEndpoint;
     }
 
     // Присоединение к комнате
@@ -61,13 +65,12 @@ public class GameHub : Hub
         
         if (userRating == null)
         {
-            rating = new RatingMongo
+            await _publishEndpoint.Publish<RatingMessage>(new
             {
                 UserId = currentUser.Id.ToString(),
                 UserName = currentUser.Name,
-                Rating = 0
-            };
-            await _mongoDbService.Ratings.InsertOneAsync(rating);
+                Rating = 0,
+            });
         }
         
         var currentRating = rating?.Rating ?? userRating?.Rating ?? 0;
@@ -152,7 +155,8 @@ public class GameHub : Hub
         {
             Users = previousGame.Users,
             Status = GameStatus.Playing,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            WhoCreatedName = previousGame.WhoCreatedName,
         };
 
         _dbContext.Games.Add(newGame);
@@ -185,9 +189,9 @@ public class GameHub : Hub
             return;
 
         // Получение данных из EF (только для идентификации пользователей)
-        var winner = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == winnerId);
-        var loser = game.Moves.First(m => m.UserId != winner?.Id).UserId;
-        var loserUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == loser);
+        
+        var winner = game.Users.FirstOrDefault(x => x.Id.ToString() == winnerId);
+        var loserUser = game.Users.FirstOrDefault(x => x.Id.ToString() != winnerId);
 
         RatingMongo winnerRating = null;
         RatingMongo loserRating = null;
@@ -199,15 +203,13 @@ public class GameHub : Hub
                 .FirstOrDefaultAsync();
 
             if (winnerRating == null)
-            {
-                // Если рейтинг не существует — создаём
-                winnerRating = new RatingMongo
+            {   
+                await _publishEndpoint.Publish<RatingMessage>(new
                 {
                     UserId = winner.Id.ToString(),
                     UserName = winner.Name,
-                    Rating = 3
-                };
-                await _mongoDbService.Ratings.InsertOneAsync(winnerRating);
+                    Rating = 3,
+                });
             }
             else
             {
@@ -227,13 +229,12 @@ public class GameHub : Hub
 
             if (loserRating == null)
             {
-                loserRating = new RatingMongo
+                await _publishEndpoint.Publish<RatingMessage>(new
                 {
                     UserId = loserUser.Id.ToString(),
                     UserName = loserUser.Name,
                     Rating = -1
-                };
-                await _mongoDbService.Ratings.InsertOneAsync(loserRating);
+                });
             }
             else
             {

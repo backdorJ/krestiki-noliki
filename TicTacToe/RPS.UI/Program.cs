@@ -1,7 +1,9 @@
 using System.Text;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using RPS.Core;
+using RPS.Core.Consumers;
 using RPS.Core.Hubs;
 using RPS.DAL;
 using TicTacToe.Core;
@@ -19,6 +21,19 @@ builder.Services.AddCore();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSignalR();
 builder.Services.AddMediator(typeof(Program).Assembly, typeof(Entry).Assembly);
+
+builder.Services.AddMassTransit(busConfigurator =>
+{
+    busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+    busConfigurator.AddConsumer<GameRatingConsumer>();
+    busConfigurator.UsingRabbitMq((context, configurator) =>
+    {
+        configurator.ConfigureEndpoints(context);
+        configurator.Host(builder.Configuration["rabbitmq"]);
+    });
+});
+
 
 builder.Services.AddAuthentication(options =>
     {

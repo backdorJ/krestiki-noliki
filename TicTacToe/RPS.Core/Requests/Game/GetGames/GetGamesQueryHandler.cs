@@ -32,9 +32,7 @@ public class GetGamesQueryHandler : IRequestHandler<GetGamesQuery, GetGamesRespo
             .Select(x => new GetGameResponseItem
             {
                 GameId = x.Id,
-                CreateUsername = x.WhoCreatedName,
                 Status = x.Status.ToString(),
-                CreatedUserId = null,
                 CreatedAt = x.CreatedAt,
             })
             .ToList();

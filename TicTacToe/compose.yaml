@@ -11,6 +11,9 @@
       - RabbitMQ__Host=rabbitmq
       - Jwt__Key=super_secret_key_12345_1313123123123123123211111111111111111111111111111111111111111111111111111111111111111
       - Jwt__Issuer=RPSApp
+      - RabbitMqOptions__RABBITMQ_DEFAULT_USER=spatHochu
+      - RabbitMqOptions__RABBITMQ_DEFAULT_PASS=spatHochu
+      - RabbitMqOptions__RabbitMqHost=rabbitmq
     depends_on:
         - postgres
         - mongo
@@ -43,13 +46,13 @@
       - rps-network
 
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3-management
     ports:
+      - "8080:15672"
       - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia/
     networks:
       - rps-network
 
@@ -58,5 +61,6 @@ networks:
     driver: bridge
 
 volumes:
+  rabbitmq_data:
   postgres_data:
   mongo_data:

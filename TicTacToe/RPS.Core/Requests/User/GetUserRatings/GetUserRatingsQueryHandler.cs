@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
-using RPS.Core.Interfaces;
+﻿using MongoDB.Driver;
 using RPS.Core.Services;
 using TicTacToe.MediatR;
 
