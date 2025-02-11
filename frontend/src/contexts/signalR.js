@@ -12,6 +12,9 @@ export const SignalRProvider = ({ children }) => {
     const [connected, setConnected] = useState(false);
 
     const startConnection = () => {
+        if (connected)
+            return
+
         const newConnection = new HubConnectionBuilder()
             .withUrl("http://localhost:5023/game-hub", {
                 skipNegotiation: true,

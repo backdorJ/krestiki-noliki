@@ -50,7 +50,10 @@ const GamesPage = () => {
         <div className="game-list-container">
             <div className="game-list-header">
                 <h1>Games Lobby</h1>
-                <button className="create-game-button" onClick={startGame}>Create Game</button>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                    <button style={{marginBottom: "10px"}} className="create-game-button" onClick={startGame}>Create Game</button>
+                    <button className="create-game-button" onClick={() => navigate("/rating")}>Rating</button>
+                </div>
             </div>
             <div className="game-list">
                 {games.map((game) => (

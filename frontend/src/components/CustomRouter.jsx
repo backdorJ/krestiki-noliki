@@ -2,6 +2,7 @@ import AuthPage from "../pages/AuthPage/AuthPage";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import GamesPage from "../pages/GamesPage/GamesPage";
 import GamePage from "../pages/GamePage/GamePage";
+import RatingPage from "../pages/RatingPage/RatingPage";
 
 const CustomRouter = ({isAuthenticated}) => {
 
@@ -14,6 +15,7 @@ const CustomRouter = ({isAuthenticated}) => {
                             ? <>
                                 <Route path="/" element={<GamesPage />} />
                                 <Route path="/game/:id" element={<GamePage />} />
+                                <Route path="/rating" element={<RatingPage />} />
                             </>
                             : <>
                                 <Route path="/register" element={<AuthPage isRegistration={true} />} />
