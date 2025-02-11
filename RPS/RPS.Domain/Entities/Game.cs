@@ -6,7 +6,8 @@ namespace RPS.Domain.Entities;
 public class Game : BaseEntity
 {
     public string RoomName { get; set; }
-    public Guid WinnerId { get; set; }
+    public Guid? WinnerId { get; set; }
+    public User? Winner { get; set; }
     public string WhoCreatedName { get; set; }
     public bool IsFinished { get; set; } = false;
 

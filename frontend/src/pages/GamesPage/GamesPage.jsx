@@ -43,7 +43,6 @@ const GamesPage = () => {
     };
 
     const join = (gameId) => {
-        connection.invoke("JoinRoom", gameId)
         navigate(`/game/${gameId}`);
     };
 
@@ -60,7 +59,7 @@ const GamesPage = () => {
                 {games.map((game) => (
                     <div key={game.id} className="game-card">
                         <div className="game-card-content">
-                            <h3>{game.gameId.slice(0, 10)}</h3>
+                            <h3>{game.createUsername}</h3>
                             <p>Status: {game.status}</p>
                         </div>
                         <button className="join-game-button" onClick={() => join(game.gameId)}>

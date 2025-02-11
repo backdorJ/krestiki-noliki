@@ -1,40 +1,50 @@
 import {useEffect, useState} from "react";
 import './GamePage.css'
 import {useSignalR} from "../../contexts/signalR";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import {joinGame} from "../../http/gameHttp";
 
 
 const GamePage = () => {
     // Хранение выбора игрока
     const { id } = useParams()
-    const [playerChoice, setPlayerChoice] = useState(null);
-    const [opponentChoice, setOpponentChoice] = useState(null);
-    const [gameOver, setGameOver] = useState(false);
     const { connection, connected, startConnection } = useSignalR()
     const [isGameStarted, setIsGameStarted] = useState(false);
-    const [isPlayer, setIsPlayer] = useState();
+    const [isPlayer, setIsPlayer] = useState(false);
     const [logs, setLogs] = useState([]);
+    const [madeMove, setMadeMove] = useState(false)
+    const navigate = useNavigate();
+    const [isFinished, setIsFinished] = useState(false);
 
     const choices = ['rock', 'paper', 'scissors'];
 
     // Логика для обработки выбора
     const handlePlayerChoice = (choice) => {
         connection.invoke("MakeMove", id, choice)
-    };
-
-    // Сброс игры
-    const handleResetGame = () => {
-        setPlayerChoice(null);
-        setOpponentChoice(null);
-        setGameOver(false);
+        setMadeMove(true)
     };
 
     useEffect(() => {
-        if (connection) {
+        joinGame(id)
+            .then(response => {
+                if (response.status === 200) {
+                    if (response.data.moves) {
+                        setLogs(prev => [...prev, ...response.data.moves])
+                    }
+
+                    const isFinished = response.data.status !== "Finished"
+                    if (isFinished)
+                        connection.invoke("JoinRoom", id)
+
+                    setIsFinished(isFinished);
+                }
+            })
+    }, [id]);
+
+    useEffect(() => {
+        if (connection && !isFinished) {
             connection.on("JoinedGameInfo", response => {
-                console.log(response)
                 setIsGameStarted(response.status === 2)
-                console.log(`game is started ${isGameStarted}`)
                 setIsPlayer(response.isPlayer)
             })
 
@@ -45,32 +55,34 @@ const GamePage = () => {
             connection.on("GameResult", response => {
                 setLogs(prev => [...prev, response.message]);
             })
+
+            connection.on("NewRoundStarted", response => {
+                setLogs([])
+                setMadeMove(false)
+                setIsPlayer(false)
+                navigate(`/game/${response}`)
+            })
         }
-    }, [connection]);
+    }, [connection, isFinished]);
 
 
 
     return (
         <div className="game-container">
+            <button className="button leave-button" onClick={() => navigate("/")}>Back to Game List</button>
             <h1>Rock, Paper, Scissors</h1>
 
             <div className="choices">
-                {!gameOver && isPlayer && isGameStarted && (
+                {isPlayer && isGameStarted && (
                     choices.map((choice) => (
                         <button
+                            disabled={madeMove}
                             key={choice}
                             onClick={() => handlePlayerChoice(choice)}
                         >
                             {choice}
                         </button>
                     ))
-                )}
-
-                {gameOver && (
-                    <div className="result">
-                        <p>You chose: {playerChoice}</p>
-                        <p>Opponent chose: {opponentChoice}</p>
-                    </div>
                 )}
             </div>
             <div>

@@ -31,6 +31,7 @@ public class GetGamesQueryHandler : IRequestHandler<GetGamesQuery, GetGamesRespo
             .OrderBy(x => x.CreatedAt)
             .Select(x => new GetGameResponseItem
             {
+                CreateUsername = x.WhoCreatedName,
                 GameId = x.Id,
                 Status = x.Status.ToString(),
                 CreatedAt = x.CreatedAt,

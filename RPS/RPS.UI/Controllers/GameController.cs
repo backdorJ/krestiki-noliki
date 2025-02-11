@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RPS.Core.Requests.Game.CreateGame;
+using RPS.Core.Requests.Game.GetGame;
 using RPS.Core.Requests.Game.GetGames;
 using TicTacToe.Core.Requests.Game.CreateGame;
 using TicTacToe.MediatR;
@@ -34,6 +35,13 @@ public class GameController : ControllerBase
     public async Task<GetGamesResponse> GetGames(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetGamesQuery(), cancellationToken);
+        return result;
+    }
+    
+    [HttpGet("join-game/{id}")]
+    public async Task<GetGameResponse> JoinGame(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetGameQuery(id), cancellationToken);
         return result;
     }
 }

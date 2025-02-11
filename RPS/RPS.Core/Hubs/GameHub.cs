@@ -33,7 +33,7 @@ public class GameHub : Hub
     {
         var game = await _dbContext.Games
             .Include(x => x.Users)
-            .FirstOrDefaultAsync(g => g.Id == Guid.Parse(gameId) && !g.IsFinished);
+            .FirstOrDefaultAsync(g => g.Id == Guid.Parse(gameId));
 
         var currentUser = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.Id == _userContext.UserId);
@@ -129,6 +129,7 @@ public class GameHub : Hub
             await SendResultToChat(result, game);
 
             game.IsFinished = true;
+            game.Status = GameStatus.Finished;
             await _dbContext.SaveChangesAsync();
 
             // Старт нового раунда через 5 секунд
