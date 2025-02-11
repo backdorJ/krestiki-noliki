@@ -30,7 +30,7 @@ builder.Services.AddMassTransit(busConfigurator =>
     busConfigurator.UsingRabbitMq((context, configurator) =>
     {
         configurator.ConfigureEndpoints(context);
-        configurator.Host(builder.Configuration["rabbitmq"]);
+        configurator.Host(builder.Configuration["RabbitMqOptions:RabbitMqHost"]);
     });
 });
 
