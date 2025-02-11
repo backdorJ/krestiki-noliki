@@ -31,7 +31,9 @@ const GamePage = () => {
     useEffect(() => {
         if (connection) {
             connection.on("JoinedGameInfo", response => {
+                console.log(response)
                 setIsGameStarted(response.status === 2)
+                console.log(`game is started ${isGameStarted}`)
                 setIsPlayer(response.isPlayer)
             })
         }

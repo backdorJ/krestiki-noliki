@@ -13,7 +13,7 @@ export const SignalRProvider = ({ children }) => {
 
     const startConnection = () => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl("http://localhost:7000/game-hub", {
+            .withUrl("http://localhost:5023/game-hub", {
                 skipNegotiation: true,
                 transport: HttpTransportType.WebSockets,
                 accessTokenFactory: () => localStorage.getItem('token') ?? "default"
