@@ -15,16 +15,6 @@ const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
             startConnection();
         }
     }, []);
-    
-    useEffect(() => {
-        if (connection)
-        {
-            connection.on("JoinedGameInfo", response => {
-                console.log("JoinedGameInfo")
-                console.log(response)
-            })
-        }
-    }, [connection]);
 
     if (!isOpen) return null;
 

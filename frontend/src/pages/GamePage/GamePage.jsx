@@ -13,6 +13,7 @@ const GamePage = () => {
     const { connection, connected, startConnection } = useSignalR()
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [isPlayer, setIsPlayer] = useState();
+    const [logs, setLogs] = useState([]);
 
     const choices = ['rock', 'paper', 'scissors'];
 
@@ -34,8 +35,18 @@ const GamePage = () => {
                 setIsGameStarted(response.status === 2)
                 setIsPlayer(response.isPlayer)
             })
+
+            connection.on("MoveMade", response => {
+                setLogs(prev => [...prev, response.message]);
+            })
+
+            connection.on("GameResult", response => {
+                setLogs(prev => [...prev, response.message]);
+            })
         }
     }, [connection]);
+
+
 
     return (
         <div className="game-container">
@@ -60,10 +71,11 @@ const GamePage = () => {
                     </div>
                 )}
             </div>
-
-            {gameOver && (
-                <button onClick={handleResetGame}>Play Again</button>
-            )}
+            <div>
+                {
+                    logs.map(log => <p>{log}</p>)
+                }
+            </div>
         </div>
     );
 };
