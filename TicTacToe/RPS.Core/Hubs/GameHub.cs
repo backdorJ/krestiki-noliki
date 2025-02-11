@@ -172,7 +172,10 @@ public class GameHub : Hub
         
         await Clients
             .Group(game.Id.ToString())
-            .SendAsync("GameResult", new {Message =  $"Rating player: {winner?.Name} - {winner?.Rating}\nRating player: {loserUser?.Name} - {loserUser?.Rating}"});
+            .SendAsync(
+                "GameResult",
+                new {Message =  $"Rating player: {winner?.Name} - {winner?.Rating}" +
+                                $"\nRating player: {loserUser?.Name} - {loserUser?.Rating}"});
 
         await _dbContext.SaveChangesAsync();
     }
