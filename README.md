@@ -1,4 +1,4 @@
-localhost:3000 frontend \
+localhost:3000 - frontend \
 localhost:3000/register - регистрация \
 localhost:3000/login - авторизация \
 localhost:3000 - список игр
