@@ -23,6 +23,17 @@
     networks:
         - rps-network
 
+  rps.frontend:
+    build:
+      context: ../frontend/  # путь до фронтенд-папки
+      dockerfile: Dockerfile       # имя Dockerfile для фронта (может отличаться)
+    depends_on:
+      - rps.ui
+    ports:
+      - "3000:3000"
+    networks:
+      - rps-network
+
   postgres:
     image: postgres:16
     environment:
