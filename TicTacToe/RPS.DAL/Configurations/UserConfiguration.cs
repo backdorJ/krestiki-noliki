@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using RPS.Domain.Entities;
 using TicTacToe.Domain.Entities;
 
 namespace RPS.DAL.Configurations;

@@ -38,7 +38,7 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
             Status = GameStatus.Waiting,
             MaxRating =  request.MaxRating,
             CreatedAt = DateTime.UtcNow,
-            Users = new List<TicTacToe.Domain.Entities.User>()
+            Users = new List<Domain.Entities.User>()
             {
                 currentUser
             }
