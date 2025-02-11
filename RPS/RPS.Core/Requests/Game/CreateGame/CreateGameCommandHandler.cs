@@ -38,6 +38,7 @@ public class CreateGameCommandHandler : IRequestHandler<CreateGameCommand, Creat
             Status = GameStatus.Waiting,
             MaxRating =  request.MaxRating,
             CreatedAt = DateTime.UtcNow,
+            Winner = null,
             Users = new List<Domain.Entities.User>()
             {
                 currentUser

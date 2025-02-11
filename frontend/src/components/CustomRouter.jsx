@@ -1,11 +1,10 @@
 import AuthPage from "../pages/AuthPage/AuthPage";
-import {BrowserRouter, Navigate, Route, Routes, RedirectFunction } from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes, RedirectFunction, useNavigate} from "react-router-dom";
 import GamesPage from "../pages/GamesPage/GamesPage";
 import GamePage from "../pages/GamePage/GamePage";
 import RatingPage from "../pages/RatingPage/RatingPage";
 
 const CustomRouter = ({isAuthenticated}) => {
-
     return (
         <BrowserRouter>
             <div className="flex justify-center items-center h-screen bg-gray-100">

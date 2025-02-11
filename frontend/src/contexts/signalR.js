@@ -20,10 +20,6 @@ export const SignalRProvider = ({ children }) => {
             })
             .build();
 
-        newConnection.on("GetCreatedGameNotify", response => {
-            console.log(response);
-        });
-
         newConnection.start()
             .then(() => setConnected(true))
             .catch((err) => console.error("Connection failed: ", err));

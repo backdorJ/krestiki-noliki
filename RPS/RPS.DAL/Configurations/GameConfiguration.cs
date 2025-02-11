@@ -14,6 +14,9 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.Property(x => x.WinnerId);
         builder.Property(x => x.WhoCreatedName).HasDefaultValue("RPS");
 
+        builder.HasOne(x => x.Winner)
+            .WithMany();
+
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Games);
         

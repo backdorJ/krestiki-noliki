@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import './GamePage.css'
 import {useSignalR} from "../../contexts/signalR";
 import {useNavigate, useParams} from "react-router-dom";
-import {joinGame} from "../../http/gameHttp";
+import {getGame} from "../../http/gameHttp";
 
 
 const GamePage = () => {
@@ -25,16 +25,28 @@ const GamePage = () => {
     };
 
     useEffect(() => {
-        joinGame(id)
+        getGame(id)
             .then(response => {
                 if (response.status === 200) {
                     if (response.data.moves) {
-                        setLogs(prev => [...prev, ...response.data.moves])
+                        const newLogs = [...response.data.moves]
+                        if (response.data.winnerName) {
+                            newLogs.push(`Победа: ${response.data.winnerName}`)
+                        }
+                        else if (response.data.status === "Finished") {
+                            newLogs.push('Ничья')
+                        }
+                        setLogs(newLogs)
                     }
 
-                    const isFinished = response.data.status !== "Finished"
-                    if (isFinished)
-                        connection.invoke("JoinRoom", id)
+                    const isFinished = response.data.status === "Finished"
+                    if (!isFinished) {
+                        if (!isPlayer)
+                            (new Promise(r => setTimeout(r, 1000)))
+                                .then(() => connection.invoke("JoinRoom", id));
+                        else
+                            connection.invoke("JoinRoom", id)
+                    }
 
                     setIsFinished(isFinished);
                 }
@@ -49,23 +61,37 @@ const GamePage = () => {
             })
 
             connection.on("MoveMade", response => {
-                setLogs(prev => [...prev, response.message]);
+                setLogs(prev => [response.message]);
             })
 
             connection.on("GameResult", response => {
-                setLogs(prev => [...prev, response.message]);
+                getGame(id)
+                    .then(response => {
+                        if (response.status === 200) {
+                            if (response.data.moves) {
+                                const newLogs = [...response.data.moves]
+                                if (response.data.winnerName) {
+                                    newLogs.push(`Победа: ${response.data.winnerName}`)
+                                }
+                                else if (response.data.status === "Finished") {
+                                    newLogs.push('Ничья')
+                                }
+                                setLogs(newLogs)
+                            }
+
+                            setIsFinished(true);
+                        }
+                    })
             })
 
             connection.on("NewRoundStarted", response => {
                 setLogs([])
                 setMadeMove(false)
-                setIsPlayer(false)
-                navigate(`/game/${response}`)
+                (new Promise(r => setTimeout(r, 3000)))
+                    .then(() => navigate(`/game/${response}`));
             })
         }
     }, [connection, isFinished]);
-
-
 
     return (
         <div className="game-container">

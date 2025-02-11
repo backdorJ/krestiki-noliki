@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './GamesPage.css';
 import {useSignalR} from "../../contexts/signalR";
-import {createGame, getGames, joinGame} from "../../http/gameHttp";
+import {createGame, getGames, getGame} from "../../http/gameHttp";
 import CreateGameModal from "../../components/CreateGameModal/CreateGameModal";
 import {useNavigate} from "react-router-dom";
 
@@ -21,19 +21,31 @@ const GamesPage = () => {
         if (connection)
         {
             connection.on("GetCreatedGameNotify", response => {
-                if (response.arguments)
-                    console.log(response);
-                    setGames(prev => [...prev, response]);
+                if (response)
+                    setGames(prev => [...prev, response].sort((a, b) => {
+                    // Сначала сортируем по статусу (например, "active" выше "inactive")
+                    if (a.status !== b.status) {
+                        return a.status > b.status ? -1 : 1; // Изменить порядок при необходимости
+                    }
+                    // Затем сортируем по дате (предполагается, что date - строка ISO)
+                    return new Date(b.date) - new Date(a.date);
+                }));
             });
         }
     }, [connection]);
 
     useEffect(() => {
-        console.log(localStorage)
         getGames()
             .then(response => {
                 if (response.status === 200) {
-                    setGames(response.data.items);
+                    setGames(response.data.items.sort((a, b) => {
+                        // Сначала сортируем по статусу (например, "active" выше "inactive")
+                        if (a.status !== b.status) {
+                            return a.status > b.status ? -1 : 1; // Изменить порядок при необходимости
+                        }
+                        // Затем сортируем по дате (предполагается, что date - строка ISO)
+                        return new Date(b.date) - new Date(a.date);
+                    }));
                 }
             })
     }, []);
@@ -61,6 +73,10 @@ const GamesPage = () => {
                         <div className="game-card-content">
                             <h3>{game.createUsername}</h3>
                             <p>Status: {game.status}</p>
+                            {
+                                (new Date(game.createdAt)).toISOString().split("T")
+                                    .map(x => <p>{x.replace("Z", "")}</p>)
+                            }
                         </div>
                         <button className="join-game-button" onClick={() => join(game.gameId)}>
                             Join Game

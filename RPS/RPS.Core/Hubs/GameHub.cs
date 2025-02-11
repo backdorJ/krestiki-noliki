@@ -119,7 +119,7 @@ public class GameHub : Hub
 
         // Отправляем сообщение всем, кроме игроков
         await Clients.GroupExcept(gameId, playerConnectionIds)
-            .SendAsync("MoveMade", new { Message = $"The Player {currentUser.Name} made a move - {move}" });
+            .SendAsync("MoveMade", new { Message = $"{currentUser.Name}: {move}" });
 
         // Логика определения победителя
         if (game.Moves.Count == 2)
@@ -130,6 +130,7 @@ public class GameHub : Hub
 
             game.IsFinished = true;
             game.Status = GameStatus.Finished;
+            game.WinnerId = result == "draw" ? null :  new Guid(result);
             await _dbContext.SaveChangesAsync();
 
             // Старт нового раунда через 5 секунд
@@ -155,9 +156,10 @@ public class GameHub : Hub
         var newGame = new Game
         {
             Users = previousGame.Users,
-            Status = GameStatus.Playing,
+            Status = GameStatus.Waiting,
             CreatedAt = DateTime.UtcNow,
             WhoCreatedName = previousGame.WhoCreatedName,
+            MaxRating = uint.MaxValue
         };
 
         _dbContext.Games.Add(newGame);

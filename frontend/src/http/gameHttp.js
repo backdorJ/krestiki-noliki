@@ -10,10 +10,10 @@ export const getGames = (body) => {
     return $authClient.get(baseUrl + "get-games");
 }
 
-export const getGame = (id) => {
-    return $authClient.get(baseUrl + "get-game/" + id);
-}
+// export const getGame = (id) => {
+//     return $authClient.get(baseUrl + "get-game/" + id);
+// }
 
-export const joinGame = (gameId) => {
+export const getGame = (gameId) => {
     return $authClient.get(baseUrl + "join-game/" + gameId);
 }

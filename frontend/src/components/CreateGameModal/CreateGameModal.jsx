@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./CreateGameModal.css";
 import {useSignalR} from "../../contexts/signalR";
-import {createGame, joinGame} from "../../http/gameHttp";
+import {createGame, getGame} from "../../http/gameHttp";
 import {useNavigate} from "react-router-dom";
 
 const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
-    const [roomName, setRoomName] = useState("");
     const { connection, connected, startConnection } = useSignalR()
     const [maxRating, setMaxRating] = useState("");
     const navigate = useNavigate();
@@ -20,7 +19,7 @@ const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = () => {
         const request = {
-            roomName,
+            roomName: "",
             maxRating
         }
 
@@ -39,15 +38,6 @@ const CreateGameModal = ({ isOpen, onClose, onSubmit }) => {
             <div className="modal">
                 <h2>Create Game</h2>
                 <form onSubmit={handleSubmit}>
-                    <label>
-                        Room Name:
-                        <input
-                            type="text"
-                            value={roomName}
-                            onChange={(e) => setRoomName(e.target.value)}
-                            required
-                        />
-                    </label>
                     <label>
                         Max Rating:
                         <input
