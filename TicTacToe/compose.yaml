@@ -1,0 +1,66 @@
+﻿services:
+  rps.ui:
+    build:
+      context: .
+      dockerfile: RPS.UI/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - PostgresConnectionString=Host=postgres;Database=RPS;Username=postgres;Password=root
+      - MongoDbSettings__ConnectionString=mongodb://mongo:27017
+      - MongoDbSettings__DatabaseName=GameDatabase
+      - RabbitMQ__Host=rabbitmq
+      - Jwt__Key=super_secret_key_12345_1313123123123123123211111111111111111111111111111111111111111111111111111111111111111
+      - Jwt__Issuer=RPSApp
+      - RabbitMqOptions__RABBITMQ_DEFAULT_USER=spatHochu
+      - RabbitMqOptions__RABBITMQ_DEFAULT_PASS=spatHochu
+      - RabbitMqOptions__RabbitMqHost=rabbitmq
+    depends_on:
+        - postgres
+        - mongo
+        - rabbitmq
+    ports:
+        - "7000:8080"
+    networks:
+        - rps-network
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: RPS
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - rps-network
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - rps-network
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "8080:15672"
+      - "5672:5672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia/
+    networks:
+      - rps-network
+
+networks:
+  rps-network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
+  mongo_data:
