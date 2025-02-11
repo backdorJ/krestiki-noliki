@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RPS.Core.Interfaces;
-using TicTacToe.Core.Interfaces;
 using TicTacToe.MediatR;
 
 namespace RPS.Core.Requests.Game.GetGames;
@@ -36,6 +35,7 @@ public class GetGamesQueryHandler : IRequestHandler<GetGamesQuery, GetGamesRespo
                 CreateUsername = x.WhoCreatedName,
                 Status = x.Status.ToString(),
                 CreatedUserId = null,
+                CreatedAt = x.CreatedAt,
             })
             .ToList();
 

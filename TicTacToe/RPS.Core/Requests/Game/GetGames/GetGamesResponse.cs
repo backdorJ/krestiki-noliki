@@ -11,4 +11,6 @@ public class GetGameResponseItem
     public string CreateUsername { get; set; }
     public string Status { get; set; }
     public string CreatedUserId { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }
