@@ -7,6 +7,7 @@ export const createGame = (body) => {
 }
 
 export const getGames = (body) => {
+    console.log()
     return $authClient.get(baseUrl + "get-games");
 }
 

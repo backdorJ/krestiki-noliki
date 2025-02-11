@@ -24,7 +24,10 @@ const AuthPage = (props) => {
 
         if (isRegistration) {
             body.passwordConfirm = password;
-            register(body).then(() => {
+            register(body).then(response => {
+                if (response.status === 200) {
+                    navigate("/login");
+                }
             })
         }
         else

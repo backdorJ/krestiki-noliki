@@ -29,6 +29,7 @@ const GamesPage = () => {
     }, [connection]);
 
     useEffect(() => {
+        console.log(localStorage)
         getGames()
             .then(response => {
                 if (response.status === 200) {

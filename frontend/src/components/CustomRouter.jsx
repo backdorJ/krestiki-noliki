@@ -1,5 +1,5 @@
 import AuthPage from "../pages/AuthPage/AuthPage";
-import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes, RedirectFunction } from "react-router-dom";
 import GamesPage from "../pages/GamesPage/GamesPage";
 import GamePage from "../pages/GamePage/GamePage";
 import RatingPage from "../pages/RatingPage/RatingPage";
@@ -20,7 +20,6 @@ const CustomRouter = ({isAuthenticated}) => {
                             : <>
                                 <Route path="/register" element={<AuthPage isRegistration={true} />} />
                                 <Route path="/login" element={<AuthPage isRegistration={false} />} />
-                                {/*<Route path="*" element={<Navigate to="/register" replace />} />*/}
                             </>
                     }
                 </Routes>
